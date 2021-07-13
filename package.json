@@ -4,6 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
+    "chai": "^4.3.4",
     "hardhat": "^2.4.3"
   },
   "devDependencies": {
