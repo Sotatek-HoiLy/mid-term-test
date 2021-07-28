@@ -1,14 +1,15 @@
+//SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.0;
 
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/access/AccessControl.sol";
 import "./Action.sol";
+import "./MyERC20.sol";
+import "./MyAccessControl.sol";
 
-contract Token is ERC20, AccessControl, Ownable, Action {
+contract Token is MyERC20, MyAccessControl, Action {
     bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
     bytes32 public constant BURNER_ROLE = keccak256("BURNER_ROLE");
     bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
+    uint8 public _decimals;
 
     constructor(
         string memory name,
@@ -17,7 +18,8 @@ contract Token is ERC20, AccessControl, Ownable, Action {
         address minterRole,
         address burnerRole,
         address adminRole
-    ) ERC20(name, symbol) {
+    ) MyERC20(name, symbol) {
+        _decimals = 18;
         _mint(owner, 0);
         _setupRole(MINTER_ROLE, minterRole);
         _setupRole(BURNER_ROLE, burnerRole);
@@ -62,8 +64,7 @@ contract Token is ERC20, AccessControl, Ownable, Action {
         setUnpause();
     }
 
-    function transfer(address _address, uint256 amount) public override isPauseTransfer returns (bool) {
-        _transfer(msg.sender, _address, amount);
-        return true;
+    function transfer(address _address, uint256 amount) public payable isPauseTransfer returns (bool) {
+        return _transfer(msg.sender, _address, amount);
     }
 }
